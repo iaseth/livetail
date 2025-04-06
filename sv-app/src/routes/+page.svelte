@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { extractClassNamesFromHTML, filterCssRulesByClassNames, sanitize } from "$lib";
+	import { extractClassNamesFromHTML, filterCssRulesByClassNames } from "$lib";
+	import { filterXSS } from "xss";
 
 	// User HTML input
 	let htmlInput = $state(`<div class="p-6 bg-primary text-primary-content rounded-box">
@@ -8,9 +9,9 @@
 
 	// Sanitize whenever htmlInput changes
 	let safeHtml = $derived.by(() => {
-		// const sanitized = sanitize(htmlInput);
+		const sanitized = filterXSS(htmlInput);
 		// setTimeout(extractCss, 1000);
-		return htmlInput;
+		return sanitized;
 	});
 
 	let compiledCss = $state('')

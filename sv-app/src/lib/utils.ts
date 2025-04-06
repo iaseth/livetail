@@ -1,8 +1,5 @@
-import DOMPurify from 'dompurify';
 
 
-
-export const sanitize = (html: string) => DOMPurify.sanitize(html);
 
 // Extract class names using DOMParser
 export function extractClassNamesFromHTML(html: string): Set<string> {
