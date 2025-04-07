@@ -1,11 +1,13 @@
 
 <script lang="ts">
+	import { cssBlocksToCss, type MyCssBlock } from '$lib';
 	import Prism from 'prismjs';
 
 	interface Props {
-		compiledCss: string
+		cssBlocks: MyCssBlock[]
 	}
-	let { compiledCss }: Props = $props();
+	let { cssBlocks }: Props = $props();
+	const compiledCss: string = $derived.by(() => cssBlocksToCss(cssBlocks));
 	const language = 'css';
 
 	let preEl: HTMLElement;

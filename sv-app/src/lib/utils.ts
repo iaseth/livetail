@@ -4,7 +4,13 @@ import { filterXSS } from "xss";
 
 
 export interface MyCssBlock {
-	className: string
+	className: string,
+	statements: MyCssStatement[]
+}
+
+export interface MyCssStatement {
+	prop: string,
+	value: string
 }
 
 const options = {
@@ -62,8 +68,8 @@ export function getAllCssRules(): CSSRule[] {
 }
 
 // Filter CSS rules for used class names
-export function filterCssRulesByClassNames(rules: CSSRule[], classNames: Set<string>): string {
-	let result = '';
+export function filterCssRulesByClassNames(rules: CSSRule[], classNames: Set<string>): MyCssBlock[] {
+	let cssBlocks: MyCssBlock[] = [];
 
 	for (const rule of rules) {
 		const styleRule = rule as CSSStyleRule;
@@ -72,12 +78,25 @@ export function filterCssRulesByClassNames(rules: CSSRule[], classNames: Set<str
 		const className = styleRule.selectorText.slice(1);
 		if (classNames.has(className)) {
 			// console.log(`Found class: "${className}"`);
-			const decls = Array.from(styleRule.style)
-				.map((prop) => `\t${prop}: ${styleRule.style.getPropertyValue(prop).trim()};`)
-				.join('\n');
-			result += `${className} {\n${decls}\n}\n\n`;
+			const statements: MyCssStatement[] = Array.from(styleRule.style)
+				.map((prop) => ({ prop, value: styleRule.style.getPropertyValue(prop).trim() }))
+			const block: MyCssBlock = { className, statements };
+			cssBlocks.push(block);
 		}
 	}
 
-	return result || '/* No matching CSS */';
+	cssBlocks.sort((a, b) => a.className.localeCompare(b.className));
+	return cssBlocks;
+}
+
+export function cssBlocksToCss (cssBlocks: MyCssBlock[]): string {
+	let result = '';
+	for (const cssBlock of cssBlocks) {
+		result += `.${cssBlock.className} {\n`
+		for (const statement of cssBlock.statements) {
+			result += `\t${statement.prop}: ${statement.value};\n`
+		}
+		result += "}\n\n"
+	}
+	return result;
 }

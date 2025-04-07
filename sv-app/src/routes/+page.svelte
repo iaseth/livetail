@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, sanitize } from "$lib";
+	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, sanitize, type MyCssBlock } from "$lib";
 	import CssBlock from "../components/CssBlock.svelte";
 	import HtmlEditor from "../components/HtmlEditor.svelte";
 	import 'prismjs/themes/prism-tomorrow.css';
@@ -14,11 +14,11 @@
 		return sanitized;
 	});
 
-	let compiledCss = $state('')
+	let cssBlocks: MyCssBlock[] = $state([])
 	function extractCss () {
 		const classNames = extractClassNamesFromHTML(htmlInput);
 		const allCssRules: CSSRule[] = getAllCssRules();
-		compiledCss = filterCssRulesByClassNames(allCssRules, classNames);
+		cssBlocks = filterCssRulesByClassNames(allCssRules, classNames);
 	}
 </script>
 
@@ -43,6 +43,6 @@
 	<!-- CSS Styles -->
 	<div class="flex flex-col max-h-screen">
 		<h2 class="text-lg font-bold mb-2" hidden>CSS Styles</h2>
-		<CssBlock {compiledCss} />
+		<CssBlock {cssBlocks} />
 	</div>
 </div>
