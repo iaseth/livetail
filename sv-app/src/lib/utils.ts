@@ -4,7 +4,7 @@ import { filterXSS } from "xss";
 
 
 export interface MyCssBlock {
-	className: string,
+	selectorText: string,
 	statements: MyCssStatement[]
 }
 
@@ -69,30 +69,40 @@ export function getAllCssRules(): CSSRule[] {
 
 // Filter CSS rules for used class names
 export function filterCssRulesByClassNames(rules: CSSRule[], classNames: Set<string>): MyCssBlock[] {
+	if (rules.length === 0 || classNames.size === 0) return [];
 	let cssBlocks: MyCssBlock[] = [];
 
 	for (const rule of rules) {
 		const styleRule = rule as CSSStyleRule;
 		if (!styleRule.selectorText || styleRule.selectorText[0] !== '.') continue;
 
-		const className = styleRule.selectorText.slice(1);
-		if (classNames.has(className)) {
-			// console.log(`Found class: "${className}"`);
-			const statements: MyCssStatement[] = Array.from(styleRule.style)
-				.map((prop) => ({ prop, value: styleRule.style.getPropertyValue(prop).trim() }))
-			const block: MyCssBlock = { className, statements };
-			cssBlocks.push(block);
+		for (const className of classNames) {
+			if (styleRule.selectorText.includes(`.${className}`)) {
+				const selectorText = styleRule.selectorText.trim();
+				if (cssBlocks.findIndex(b => b.selectorText === selectorText) !== -1) {
+					continue;
+				}
+
+				const statements: MyCssStatement[] = Array.from(styleRule.style)
+					.map((prop) => ({
+						prop,
+						value: styleRule.style.getPropertyValue(prop).trim()
+					}));
+				const block: MyCssBlock = { selectorText, statements };
+				cssBlocks.push(block);
+				break;
+			}
 		}
 	}
 
-	cssBlocks.sort((a, b) => a.className.localeCompare(b.className));
+	cssBlocks.sort((a, b) => a.selectorText.localeCompare(b.selectorText));
 	return cssBlocks;
 }
 
 export function cssBlocksToCss (cssBlocks: MyCssBlock[]): string {
 	let result = '';
 	for (const cssBlock of cssBlocks) {
-		result += `.${cssBlock.className} {\n`
+		result += `${cssBlock.selectorText} {\n`
 		for (const statement of cssBlock.statements) {
 			result += `\t${statement.prop}: ${statement.value};\n`
 		}
