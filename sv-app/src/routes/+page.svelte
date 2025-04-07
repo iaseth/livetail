@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, sanitize } from "$lib";
+	import HtmlEditor from "../components/HtmlEditor.svelte";
 
 	// User HTML input
 	let htmlInput = $state(`<div class="p-6 bg-red-500 text-white rounded-md">\n\tHello from LiveTail!\n</div>`);
@@ -24,7 +25,7 @@
 	<script src="https://cdn.tailwindcss.com"></script>
 </svelte:head>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-x-2 gap-y-4 p-2 box-border bg-base-200 text-base-content h-screen">
+<div class="grid grid-cols-1 md:grid-cols-3 box-border bg-base-200 text-base-content h-screen">
 	<!-- Rendered HTML -->
 	<div class="flex flex-col max-h-screen">
 		<h2 class="text-lg font-bold mb-2" hidden>Rendered</h2>
@@ -32,17 +33,14 @@
 	</div>
 
 	<!-- Editor -->
-	<div class="flex flex-col max-h-screen">
+	<div class="flex flex-col max-h-screen bg-base-300">
 		<h2 class="text-lg font-bold mb-2" hidden>Editor</h2>
-		<textarea
-			class="textarea flex-1 w-full resize-none font-mono"
-			bind:value={htmlInput}
-		></textarea>
+		<HtmlEditor bind:htmlInput />
 	</div>
 
 	<!-- CSS Styles -->
-	<div class="flex flex-col max-h-screen overflow-y-scroll">
+	<div class="flex flex-col max-h-screen">
 		<h2 class="text-lg font-bold mb-2" hidden>CSS Styles</h2>
-		<pre class="bg-base-100 p-2 overflow-auto flex-1 text-sm whitespace-pre-wrap">{compiledCss}</pre>
+		<pre class="p-2 overflow-auto flex-1 text-sm whitespace-pre-wrap">{compiledCss}</pre>
 	</div>
 </div>

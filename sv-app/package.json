@@ -22,6 +22,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
+		"@types/prismjs": "^1.26.5",
 		"daisyui": "^5.0.13",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
@@ -38,6 +39,7 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
+		"prismjs": "^1.30.0",
 		"xss": "^1.0.15"
 	}
 }
