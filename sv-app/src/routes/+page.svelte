@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, sanitize } from "$lib";
+	import CssBlock from "../components/CssBlock.svelte";
 	import HtmlEditor from "../components/HtmlEditor.svelte";
+	import 'prismjs/themes/prism-tomorrow.css';
 
 	// User HTML input
 	let htmlInput = $state(`<div class="p-6 bg-red-500 text-white rounded-md">\n\tHello from LiveTail!\n</div>`);
@@ -41,6 +43,6 @@
 	<!-- CSS Styles -->
 	<div class="flex flex-col max-h-screen">
 		<h2 class="text-lg font-bold mb-2" hidden>CSS Styles</h2>
-		<pre class="p-2 overflow-auto flex-1 text-sm whitespace-pre-wrap">{compiledCss}</pre>
+		<CssBlock {compiledCss} />
 	</div>
 </div>

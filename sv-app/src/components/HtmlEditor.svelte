@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Prism from 'prismjs';
-	import 'prismjs/components/prism-markup';
-	import 'prismjs/themes/prism-tomorrow.css';
 
 	interface Props {
 		htmlInput: string
@@ -11,14 +9,14 @@
   
 	let textareaEl: HTMLTextAreaElement;
 	let preEl: HTMLElement;
-  
+
 	// Highlight input whenever it changes
 	$effect(() => {
 		if (preEl && Prism.languages[language]) {
 			preEl.innerHTML = Prism.highlight(htmlInput, Prism.languages[language], language);
 		}
 	});
-  
+
 	async function handleKeydown(e: KeyboardEvent) {
 	  if (e.key === 'Tab') {
 		e.preventDefault();
