@@ -1,15 +1,20 @@
 <script lang="ts">
-	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, sanitize, type MyCssBlock } from "$lib";
+	import { extractClassNamesFromHTML, filterCssRulesByClassNames, getAllCssRules, getLocalStorage, sanitize, setLocalStorage, type MyCssBlock } from "$lib";
+	import { onMount } from "svelte";
 	import CssBlock from "../components/CssBlock.svelte";
 	import HtmlEditor from "../components/HtmlEditor.svelte";
 	import 'prismjs/themes/prism-tomorrow.css';
 
 	// User HTML input
-	let htmlInput = $state(`<div class="p-6 bg-red-500 text-white rounded-md">\n\tHello from LiveTail!\n</div>`);
+	let htmlInput = $state('');
+	let mounted = $state(false);
 
 	// Sanitize whenever htmlInput changes
 	let safeHtml = $derived.by(() => {
 		const sanitized = sanitize(htmlInput);
+		if (mounted) {
+			setLocalStorage(htmlInput);
+		}
 		setTimeout(extractCss, 1000);
 		return sanitized;
 	});
@@ -20,6 +25,11 @@
 		const allCssRules: CSSRule[] = getAllCssRules();
 		cssBlocks = filterCssRulesByClassNames(allCssRules, classNames);
 	}
+
+	onMount(() => {
+		htmlInput = getLocalStorage();
+		mounted = true;
+	});
 </script>
 
 <svelte:head>
